@@ -1,5 +1,5 @@
 set :application, "blog"
-set :repository, "git@github.com:somasekhar/blog.git"
+set :repository, "https://github.com/somasekhar/blog.git"
 set :domain, '178.79.177.186' #Your Accelerators public IP address
 
 set :scm, :git
