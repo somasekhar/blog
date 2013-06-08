@@ -1,25 +1,33 @@
-set :application, "set your application name here"
-set :repository,  "set your repository location here"
+set :application, "blog"
+set :repository, "git@github.com:somasekhar/blog.git"
+set :domain, '178.79.177.186' #Your Accelerators public IP address
 
-# set :scm, :git # You can set :scm explicitly or Capistrano will make an intelligent guess based on known version control directory names
+set :scm, :git
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
 
-role :web, "your web-server here"                          # Your HTTP server, Apache/etc
-role :app, "your app-server here"                          # This may be the same as your `Web` server
-role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
-role :db,  "your slave db-server here"
+set :deploy_to, "/home/projects/blog/"
+set :user, "root"
 
-# if you want to clean up old releases on each deploy uncomment this:
-# after "deploy:restart", "deploy:cleanup"
+set :keep_releases, 5
+
+role :web, domain # Your HTTP server, Apache/etc
+role :app, domain # This may be the same as your `Web` server
+role :db, domain, :primary => true # This is where Rails migrations will run
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
 
+after "deploy:restart", "deploy:cleanup"
+
 # If you are using Passenger mod_rails uncomment this:
-# namespace :deploy do
-#   task :start do ; end
-#   task :stop do ; end
-#   task :restart, :roles => :app, :except => { :no_release => true } do
-#     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
-#   end
-# end
+namespace :deploy do
+  task :start do ; end
+  task :stop do ; end
+  task :restart, :roles => :app, :except => { :no_release => true } do
+    run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
+    run "#{try_sudo} chmod -R a+rw #{current_path}/public"
+    run "#{try_sudo} chmod -R a+rw #{current_path}/"
+    run "#{try_sudo} chmod -R a+rw #{current_path}/Gemfile.lock"
+  end
+end
+
